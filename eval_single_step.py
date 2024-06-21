@@ -2,10 +2,10 @@
 import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer
 #from utils.args_parser import ArgsParser
-from data.dataset.multiwoz import MultiWozDataset
+# from data.dataset.multiwoz import MultiWozDataset
 #from evaluate_multiwoz import MultiWozDB
-from utils.multiwoz import dbPointer
-from utils.simpletod import *
+# from utils.multiwoz import dbPointer
+# from utils.simpletod import *
 from utils.Evaluation import Evaluation
 
 import json
@@ -28,7 +28,10 @@ args.para_names = ['dataset', 'method', 'time', 'nlayer','nhead','nemb','bz','lr
 args.para_values = [args.dataset, 'SimpleDyG', args.timestamp, args.n_layer, args.n_head, args.n_embed, args.per_gpu_train_batch_size, args.learning_rate, args.seed]
     
 spl_tokens = ['<|history|>','<|endofhistory|>','<|pre|>','<|endofpre|>','<|endoftext|>','[PAD]'] + ['<|time'+str(i)+'|>' for i in range(int(args.timestamp)+1)]    
+# 测试集？
 file_path = os.path.join('resources', dataset, timestamp,'test.link_prediction')
+# gt: ground truth
+# 测试集的gt？
 file_path_gt = os.path.join('resources', dataset, timestamp, 'test_gt.link_prediction')
 
 with open(file_path, encoding="utf-8") as f:
@@ -49,20 +52,21 @@ save_score = open(os.path.join(save_score_path, 'score_all.txt'),'a')
 test_user_ids_DySAT = None
 # read the vocab of this timestamp, when evluating, omit the ids not in the vocab
 vocab_file = os.path.join('./vocabs', dataset, timestamp, 'vocab.json')
-vocab = json.load(open(vocab_file, 'r'))
+vocab = json.load(open(vocab_file, 'r')) # ! 包含这个图中的所有顶点（train/val/test中的），不过这样的话似乎就都是transductive的场景了
 max_score = -1
 Eval = Evaluation()
 steps = [0] #[steps[-1]]
 for ind_step,step in enumerate(steps):
     model_checkpoint = os.path.join(checkpoint_path, 'checkpoint-{}'.format(step))
     print('model_checkpoint: ', model_checkpoint)
+    # tokenizer和model都是训练得到的模型
     tokenizer = PreTrainedTokenizerFast(tokenizer_file=os.path.join(model_checkpoint,'tokenizer.json'), use_fast=False)
     model = GPT2LMHeadModel.from_pretrained(model_checkpoint)
 
     model.eval()
     model.to('cuda')
 
-    break_tokens = tokenizer.encode("<|endoftext|>")
+    break_tokens = tokenizer.encode("<|endoftext|>") # Converts a string to a sequence of ids (integer), using the tokenizer and vocabulary.
     MAX_LEN = model.config.n_ctx
 
     generated_dict = {}
@@ -77,8 +81,8 @@ for ind_step,step in enumerate(steps):
     num_user_test = 0
     for i, (input_text, text_gt) in enumerate(tqdm(zip(data, data_gt))):
         generated_dict[i] = {}
-        user_id = input_text.split()[2]
-        target_list = text_gt.split()[1:-2]
+        user_id = input_text.split()[2] # eg: 1468
+        target_list = text_gt.split()[1:-2] # eg: <|time12|> 1279 1680 960
         # remove all user id in target_list
         target_list = [token for token in target_list if token != user_id]
         # get the target id appaer in the vocab
@@ -87,7 +91,8 @@ for ind_step,step in enumerate(steps):
         if len(target_list) == 0:
             print('text_gt: ', text_gt)
             continue
-        indexed_tokens = tokenizer.encode(input_text)
+        indexed_tokens = tokenizer.encode(input_text) # Converts a string to a sequence of ids (integer), using the tokenizer and vocabulary
+        # 将输入序列编码为token序列
         num_user_test+=1 
         if len(indexed_tokens) > MAX_LEN:
             print('len_input: ', len(indexed_tokens))
@@ -100,14 +105,14 @@ for ind_step,step in enumerate(steps):
         predicted_index = []
         len_input = len(indexed_tokens)
         while predicted_index not in break_tokens:
-            outputs = model(tokens_tensor)
+            outputs = model(tokens_tensor) # 根据输入的token序列，输出下一个位置是哪个token的概率（词典中每个token都预测一个概率）
             predictions = outputs[0]
-            predicted_index = torch.argmax(predictions[0, -1, :]).item() 
-            indexed_tokens += [predicted_index] 
+            predicted_index = torch.argmax(predictions[0, -1, :]).item() # 是哪个token
+            indexed_tokens += [predicted_index] # 将预测得到的token追加到token序列后，然后下一个循环继续预测下一个token
             
-            predicted_text = tokenizer.decode(indexed_tokens)
+            # predicted_text = tokenizer.decode(indexed_tokens) 
             
-            tokens_tensor = torch.tensor([indexed_tokens]).to('cuda')
+            tokens_tensor = torch.tensor([indexed_tokens]).to('cuda') 
             if len(indexed_tokens) >= MAX_LEN-len(spl_tokens):
                 break
             if tokenizer.decode(indexed_tokens).endswith('<|endoftext|>'):
@@ -115,9 +120,9 @@ for ind_step,step in enumerate(steps):
             #if tokenizer.decode(indexed_tokens).endswith('[PAD]'):
             #    break 
 
-        predicted_text = tokenizer.decode(indexed_tokens)
+        predicted_text = tokenizer.decode(indexed_tokens) # 将预测得到的token序列解码
         predicted_list = predicted_text.split()
-        predicted_list = predicted_list[len_input:]
+        predicted_list = predicted_list[len_input:] # 这是预测输出，这部分和ground truth比较来计算metrics
 
         # remove all user id in predicted_list,remove the tokens if it belongs to spl_token
         predicted = [token for token in predicted_list if token != user_id]

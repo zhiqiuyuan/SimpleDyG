@@ -190,7 +190,7 @@ def train_epoch(model, tokenizer, optimizer, scheduler, train_dataloader, tr_los
         inputs = inputs.to(args.device)
         labels = labels.to(args.device)
         model.train()
-        outputs = model(inputs, labels=labels)
+        outputs = model(inputs, labels=labels) # ! 这里
         loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
 
         if args.n_gpu > 1:

@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampl
 from torch.utils.data.distributed import DistributedSampler
 from transformers import PreTrainedTokenizer
 import os
+import random
 import logging
 logger = logging.getLogger(__name__)
 
