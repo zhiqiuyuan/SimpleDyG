@@ -19,6 +19,8 @@ def get_optimizer_scheduler(args, model, t_total):
         {"params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], "weight_decay": 0.0},
     ]
     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
+    # Create a schedule with a learning rate that decreases linearly from the initial lr set in the optimizer to 0, 
+    # after a warmup period during which it increases linearly from 0 to the initial lr set in the optimizer.
     scheduler = get_linear_schedule_with_warmup(
         optimizer, num_warmup_steps=args.warmup_steps, num_training_steps=t_total
     )

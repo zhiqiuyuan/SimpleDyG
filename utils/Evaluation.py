@@ -15,6 +15,8 @@ class Evaluation:
 		label = set(label)
 		return len(pred & label) / len(pred | label)
 
+    # 如果两个序列完全一样，这个measure是1，
+    # 这个值越大越好
 	def ndcg_k(self,sorted_indices, ground_truth, k):
 		dcg, pdcg = 0,0
 		for i, item in enumerate(sorted_indices[:k]):
@@ -27,7 +29,7 @@ class Evaluation:
 
 def get_eval_metrics(args, model, tokenizer, step, mode = "val"):
 
-    spl_tokens = tokenizer.additional_special_tokens+[tokenizer.bos_token,tokenizer.eos_token,tokenizer.pad_token]
+    spl_tokens = tokenizer.additional_special_tokens+[tokenizer.bos_token,tokenizer.eos_token,tokenizer.pad_token] # TODO ablation
     print('spl_tokens: ', spl_tokens) 
     if mode=='val':
         file_path = args.eval_data_file
@@ -81,7 +83,7 @@ def get_eval_metrics(args, model, tokenizer, step, mode = "val"):
     num_user_test = 0
     for i, (input_text, text_gt) in enumerate(tqdm(zip(data, data_gt))):
         generated_dict[i] = {}   
-        user_id = input_text.split()[2]
+        user_id = input_text.split()[2] # 中心顶点的id（回顾，序列是一个中心顶点的历史邻居们）
         target_list = text_gt.split()[1:-2]
         # remove all user id in target_list
         target_list = [token for token in target_list if token != user_id]
@@ -105,8 +107,8 @@ def get_eval_metrics(args, model, tokenizer, step, mode = "val"):
         len_input = len(indexed_tokens)
         gen_len = 0
         while predicted_index not in break_tokens:
-            outputs = model(tokens_tensor)
-            predictions = outputs[0]
+            outputs = model(tokens_tensor) # ! 这里是前向计算，预测下一个位置
+            predictions = outputs[0] # 对于vocab中每个单词预测一个概率
             predicted_index = torch.argmax(predictions[0, -1, :]).item() 
             indexed_tokens += [predicted_index]
             
@@ -115,7 +117,7 @@ def get_eval_metrics(args, model, tokenizer, step, mode = "val"):
             tokens_tensor = torch.tensor([indexed_tokens]).to('cuda')
             gen_len +=1
             if mode == 'val':
-                if gen_len>10:
+                if gen_len>10: # ? 为啥validation的时候，就预测到10步就不继续预测了呢？
                     break
             else:
                 if len(indexed_tokens) >= MAX_LEN-len(spl_tokens):
@@ -152,7 +154,7 @@ def get_eval_metrics(args, model, tokenizer, step, mode = "val"):
         generated_dict[i]['len input_text'] = len(input_text.split())
         generated_dict[i]['predicted_list_ori'] = predicted_list
         generated_dict[i]['predicted'] = predicted
-        generated_dict[i]['NDCG@k'] = str( Eval.ndcg_k(predicted, target_list, 1))
+        generated_dict[i]['NDCG@k'] = str( Eval.ndcg_k(predicted, target_list, 1)) # ! 这里给k传的1？不过test结果不是从这里读取的就是了（从top_k_scores中读取的），所以似乎没有关系
         generated_dict[i]['num_user_test'] = str(num_user_test)
 
     for metric in metric_terms:

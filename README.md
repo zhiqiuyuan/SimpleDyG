@@ -2,8 +2,11 @@
 
 The code and datasets used for our paper "On the Feasibility of Simple Transformer for Dynamic Graph Modeling" which is accepted by WWW 2024.
 
-# Requirements and Installation
+# Requirements and Installation 我装的环境是：modcard服务器上，SimpleDyG conda环境
 
+```bash
+conda create -n SimpleDyG python=3.9
+```
 
 python>=3.9
 
@@ -14,6 +17,22 @@ transformers>=4.24.0
 The package can be installed by running the following command.
 
 `pip install -r requirements.txt`
+
+注意，其中的torch的版本，需要和你机器上cuda的版本匹配（可以先按requirements中的装了，运行的时候报错的时候去搜应该装什么版本的torch）
+比如报错如下：
+A100-SXM4-40GB with CUDA capability sm_80 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_37 sm_50 sm_60 sm_70.
+If you want to use the A100-SXM4-40GB GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+然后搜到的[解决方法](https://github.com/acids-ircam/RAVE/discussions/123)是装这个版本的
+pip install torch==1.11.0+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
+
+安装环境中的error：
+```bash
+ERROR: sqlalchemy 2.0.31 has requirement typing-extensions>=4.6.0, but you'll have typing-extensions 4.5.0 which is incompatible.
+ERROR: pyfume 0.3.4 has requirement numpy==1.24.4, but you'll have numpy 1.24.3 which is incompatible.
+ERROR: pyfume 0.3.4 has requirement pandas==1.5.3, but you'll have pandas 2.0.1 which is incompatible.
+```
+
 
 # Benchmark Datasets and Preprocessing (Optional)
 

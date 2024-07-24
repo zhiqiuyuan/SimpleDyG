@@ -99,6 +99,7 @@ else:
     data_test = data[data['timestamp']==max_timestamp]
 
     # reapeat the data by exchange the "u" and "i
+    # (undirected graph)
     data_reverse = data_train.copy()
     data_reverse['u'] = data_train['i']
     data_reverse['i'] = data_train['u']

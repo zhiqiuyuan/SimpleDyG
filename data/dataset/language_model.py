@@ -205,6 +205,7 @@ def get_dataloader(dataset, tokenizer, args, split='train'):
         batch_size = args.eval_batch_size
         sampler = SequentialSampler(dataset)
 
+    # Data loader. Combines a dataset and a sampler, and provides an iterable over the given dataset.
     dataloader = DataLoader(dataset, sampler=sampler, batch_size=batch_size, collate_fn=collate,drop_last=True)
 
     return dataloader, args

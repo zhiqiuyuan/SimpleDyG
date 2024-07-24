@@ -84,7 +84,7 @@ def get_model_tokenizer(args):
 
     model.to(args.device)
     
-    spl_tokens = ['<|history|>','<|endofhistory|>','<|pre|>','<|endofpre|>'] + ['<|time'+str(i)+'|>' for i in range(int(args.timestamp)+1)]
+    spl_tokens = ['<|history|>','<|endofhistory|>','<|pre|>','<|endofpre|>'] + ['<|time'+str(i)+'|>' for i in range(int(args.timestamp)+1)] # TODO ablation
     args.spl_tokens = spl_tokens
     data_path = './data_pre'
     dataset = args.dataset
@@ -123,7 +123,7 @@ def get_model_tokenizer(args):
     gpt_tokenizer.add_special_tokens({'bos_token': '<|endoftext|>'})
     gpt_tokenizer.add_special_tokens({'eos_token': '<|endoftext|>'})    
 
-    gpt_tokenizer.add_special_tokens({'additional_special_tokens':spl_tokens})
+    gpt_tokenizer.add_special_tokens({'additional_special_tokens':spl_tokens}) # TODO ablation
     gpt_tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     
     #tokenizer.add_tokens(add_special_tokens, special_tokens=True)
@@ -190,7 +190,7 @@ def train_epoch(model, tokenizer, optimizer, scheduler, train_dataloader, tr_los
         inputs = inputs.to(args.device)
         labels = labels.to(args.device)
         model.train()
-        outputs = model(inputs, labels=labels) # ! 这里
+        outputs = model(inputs, labels=labels) # ! 这里是前向计算
         loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
 
         if args.n_gpu > 1:
@@ -240,6 +240,7 @@ def train(args, train_dataset, model, tokenizer):
     train_dataloader, args = get_dataloader(train_dataset, tokenizer, args)
 
     # total iteration and batch size
+    # t_total: zero_grad的次数
     if args.max_steps > 0:
         t_total = args.max_steps
         args.num_train_epochs = args.max_steps // (len(train_dataloader) // args.gradient_accumulation_steps) + 1
@@ -294,7 +295,7 @@ def train(args, train_dataset, model, tokenizer):
 
     start_time = time.time()
 
-    for _ in train_iterator:
+    for _ in train_iterator: # each epoch
 
         # train
         model, optimizer, scheduler, global_step, tr_loss, logging_loss = train_epoch(model, tokenizer, optimizer, scheduler, train_dataloader, tr_loss, logging_loss, global_step,
@@ -304,6 +305,9 @@ def train(args, train_dataset, model, tokenizer):
         results, val_loss = evaluate(args, model, tokenizer)
 
         top_k_scores = get_eval_metrics(args, model, tokenizer, global_step, mode="val")
+        # 上面两行都是在验证集上前向计算，
+        # evaluate只是计算loss
+        # get_eval_metrics还计算了两个measure (jaccia, ..)
 
         logger.info("  val_loss = {}".format(val_loss))
         
@@ -413,12 +417,12 @@ def main():
         raise ValueError(
             "--eval_data_file should be specified when do_eval is true"
         )
-    if args.should_continue:
-        sorted_checkpoints = _sorted_checkpoints(args)
-        if len(sorted_checkpoints) == 0:
-            raise ValueError("--should_continue is true, but no checkpoint found in --output_dir")
-        else:
-            args.model_name_or_path = sorted_checkpoints[-1]
+    # if args.should_continue:
+    #     sorted_checkpoints = _sorted_checkpoints(args)
+    #     if len(sorted_checkpoints) == 0:
+    #         raise ValueError("--should_continue is true, but no checkpoint found in --output_dir")
+    #     else:
+    #         args.model_name_or_path = sorted_checkpoints[-1]
 
     # Setup CUDA, GPU & distributed training
     if args.local_rank == -1 or args.no_cuda:
