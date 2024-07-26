@@ -11,8 +11,9 @@ do
                 do
                     for lr in 0.0001 
                     do
-                        for seed in 0 1 2 3 4 5 6 7 8 9
-                            do
+                        # for seed in 0 1 2 3 4 5 6 7 8 9
+                        for seed in 0
+                        do
                             export TRAIN_FILE="./resources/UCI_13/$Timestamp/train.link_prediction"
                             export TEST_FILE="./resources/UCI_13/$Timestamp/test.link_prediction"
                             export TEST_GT_FILE="./resources/UCI_13/$Timestamp/test_gt.link_prediction"
@@ -45,7 +46,6 @@ do
                                 --learning_rate=$lr \
                                 --seed=$seed \
                                 --run_seed                                               
-                            done
                         done
                     done
                 done

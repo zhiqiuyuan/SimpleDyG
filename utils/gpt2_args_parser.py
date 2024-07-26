@@ -191,6 +191,7 @@ class ArgsParser(object):
         )
         parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
         parser.add_argument("--patience", type=int, default=5, help="early stop patience")
+        parser.add_argument("--num_runs", type=int, default=1, help="num_runs")
 
         self.parser = parser
 

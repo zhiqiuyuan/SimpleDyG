@@ -12,7 +12,8 @@ do
                 do
                     for lr in 0.00001
                     do
-                        for seed in 42 0 1 2 3 4 5 6 7 8
+                        # for seed in 42 0 1 2 3 4 5 6 7 8
+                        for seed in 0
                         do
                             export TRAIN_FILE="./resources/ML_10M_13/$Timestamp/train.link_prediction"
                             export TEST_FILE="./resources/ML_10M_13/$Timestamp/test.link_prediction"

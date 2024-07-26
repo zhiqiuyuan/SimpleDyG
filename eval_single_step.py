@@ -27,11 +27,11 @@ checkpoint_path = args.output_dir
 args.para_names = ['dataset', 'method', 'time', 'nlayer','nhead','nemb','bz','lr','seed']
 args.para_values = [args.dataset, 'SimpleDyG', args.timestamp, args.n_layer, args.n_head, args.n_embed, args.per_gpu_train_batch_size, args.learning_rate, args.seed]
     
-spl_tokens = ['<|history|>','<|endofhistory|>','<|pre|>','<|endofpre|>','<|endoftext|>','[PAD]'] + ['<|time'+str(i)+'|>' for i in range(int(args.timestamp)+1)]    
-# 测试集？
+spl_tokens = ['<|history|>','<|endofhistory|>','<|pre|>','<|endofpre|>','<|endoftext|>','[PAD]'] + ['<|time'+str(i)+'|>' for i in range(int(args.timestamp)+1)]  # TODO ablation   
+# 测试集
 file_path = os.path.join('resources', dataset, timestamp,'test.link_prediction')
 # gt: ground truth
-# 测试集的gt？
+# 测试集的gt
 file_path_gt = os.path.join('resources', dataset, timestamp, 'test_gt.link_prediction')
 
 with open(file_path, encoding="utf-8") as f:
@@ -55,7 +55,7 @@ vocab_file = os.path.join('./vocabs', dataset, timestamp, 'vocab.json')
 vocab = json.load(open(vocab_file, 'r')) # ! 包含这个图中的所有顶点（train/val/test中的），不过这样的话似乎就都是transductive的场景了
 max_score = -1
 Eval = Evaluation()
-steps = [0] #[steps[-1]]
+steps = [0] #[steps[-1]] # ! 这里控制 预测多少步 （当然都是一步步这样预测下去的）
 for ind_step,step in enumerate(steps):
     model_checkpoint = os.path.join(checkpoint_path, 'checkpoint-{}'.format(step))
     print('model_checkpoint: ', model_checkpoint)
