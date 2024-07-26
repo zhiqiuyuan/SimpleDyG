@@ -70,7 +70,7 @@ def get_model_tokenizer(args):
 
     if args.config_name:
         config = config_class.from_pretrained(args.config_name, cache_dir=args.cache_dir)
-    elif args.model_name_or_path:
+    elif args.model_name_or_path: # default is here; and default args.cache_dir = None
         config = config_class.from_pretrained(args.model_name_or_path, cache_dir=args.cache_dir)
     else:
         config = config_class()
@@ -241,14 +241,17 @@ def train(args, train_dataset, model, tokenizer):
 
     # total iteration and batch size
     # t_total: zero_grad的次数
+    # args.max_steps: default is -1; running scrpits use the default
     if args.max_steps > 0:
         t_total = args.max_steps
         args.num_train_epochs = args.max_steps // (len(train_dataloader) // args.gradient_accumulation_steps) + 1
-    else:
+    else: 
         t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
+    # args.gradient_accumulation_steps: default is 1; running scrpits use the default
 
     total_batch_size = args.train_batch_size * args.gradient_accumulation_steps * (
         torch.distributed.get_world_size() if args.local_rank != -1 else 1)
+    # total_batch_size: default is not distribute training: therefore = args.train_batch_size; running scrpits use the default
 
     # Prepare optimizer and schedule (linear warmup and decay)
     optimizer, scheduler = get_optimizer_scheduler(args, model, t_total)
@@ -263,6 +266,7 @@ def train(args, train_dataset, model, tokenizer):
     # multi-gpu training
     if args.n_gpu > 1:
         model = torch.nn.DataParallel(model)
+    # args.n_gpu: default is 1; running scrpits use the default
 
     # Distributed training
     if args.local_rank != -1:
@@ -280,6 +284,8 @@ def train(args, train_dataset, model, tokenizer):
     logger.info("  Total optimization steps = {}".format(t_total))
 
     global_step, epochs_trained, steps_trained_in_current_epoch = get_training_info(train_dataloader, args)
+    # 只是为了从之前的断点继续开始训练，可以不需要
+    # 则全部返回0
 
     tr_loss, logging_loss = 0.0, 0.0
 
@@ -501,7 +507,7 @@ def main():
     if args.do_eval and args.local_rank in [-1, 0]:
         checkpoints = [args.output_dir]
 
-        if args.eval_all_checkpoints:
+        if args.eval_all_checkpoints: # scripts are true
             checkpoints = list(
                 os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + "/**/" + WEIGHTS_NAME, recursive=True))
             )

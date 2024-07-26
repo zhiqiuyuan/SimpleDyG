@@ -1,5 +1,6 @@
 #!/bin/bash
 
+num_runs=1
 for Timestamp in {11..11} 
 do
     for batch_size in 32  
@@ -23,7 +24,7 @@ do
                         export output="output/hepth/$Timestamp/{$n_layer}_{$n_head}_{$n_embed}_{$batch_size}_{$lr}_{$seed}/gpt2"
                         export NODE_FILE="./resources/hepth/node_features.npy" 
 
-                        CUDA_VISIBLE_DEVICES=3 python main.py \
+                        CUDA_VISIBLE_DEVICES=3 python evaluate_link_prediction.py \
                             --dataset 'hepth' \
                             --output_dir=$output \
                             --model_type 'gpt2' \
@@ -48,7 +49,8 @@ do
                             --node_feat_file=$NODE_FILE \
                             --learning_rate=$lr \
                             --seed=$seed \
-                            --run_seed
+                            --run_seed \
+                            --num_runs=$num_runs
                         done
                     done                                                
                 done

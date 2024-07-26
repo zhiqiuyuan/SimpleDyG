@@ -1,5 +1,6 @@
 #!/bin/bash
 
+num_runs=1
 for Timestamp in {12..12} 
 do
     for batch_size in 64
@@ -22,7 +23,7 @@ do
                             export VAL_GT_FILE="./resources/ML_10M_13/$Timestamp/val_gt.link_prediction"      
                             export output="output/ML_10M_13/$Timestamp/{$n_layer}_{$n_head}_{$n_embed}_{$batch_size}_{$lr}_{$seed}/gpt2"
 
-                            CUDA_VISIBLE_DEVICES=1 python main.py \
+                            CUDA_VISIBLE_DEVICES=1 python evaluate_link_prediction.py \
                                 --dataset 'ML_10M_13' \
                                 --output_dir=$output \
                                 --model_type 'gpt2' \
@@ -46,7 +47,8 @@ do
                                 --n_embed=$n_embed \
                                 --learning_rate=$lr \
                                 --seed $seed \
-                                --run_seed
+                                --run_seed \
+                                --num_runs=$num_runs
                         done
                     done                                                 
                 done

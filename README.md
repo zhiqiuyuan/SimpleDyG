@@ -1,3 +1,32 @@
+# 复现
+## 环境： 
+server: modcard
+conda env: SimpleDyG_tgb
+
+## 数据集
+训练用：`resources`目录下
+测试用：`datasets`目录下，时间步在csv文件中以`timestamp`列指明
+- 注意，上述两者是统一的，只是格式不一样
+- 路径格式： dataset_name/max_time_step_value 比如uci最大的时间步是<|time12|>（从<|time0|>开始，则max_time_step_value=12
+
+## 训练和测试
+- 测试验证前，为每个数据集生成negative edges（预先生成，确保评估的时候每次用的negative edges是一样的）：用`neg_edge_generator.py`生成negative edges，保存在`datasets`目录下`dataset_val(test)_ns.pkl`（modfun上已完成）
+
+- 训练：
+`train_seed_xxx.sh` 即和作者提供的一样
+python入口文件是`main.py`
+
+- 测试：标准的link prediction（输入的测试是边流，metric是mrr）
+`test_seed_xxx.sh`
+python入口文件是`evaluate_link_prediction.py`
+
+## 输出
+`output`: `checkpoint-0`是训练时保存的模型
+`tokenizers`: `tokenizer.json`也是训练时保存的模型需要的一部分（tokenizer的词汇）
+
+`saved_results`: 测试结果（测试集和验证集上的mrr）
+`logs`: 测试时的日志
+
 # SimpleDyG
 
 The code and datasets used for our paper "On the Feasibility of Simple Transformer for Dynamic Graph Modeling" which is accepted by WWW 2024.

@@ -23,7 +23,7 @@ def get_optimizer_scheduler(args, model, t_total):
     # after a warmup period during which it increases linearly from 0 to the initial lr set in the optimizer.
     scheduler = get_linear_schedule_with_warmup(
         optimizer, num_warmup_steps=args.warmup_steps, num_training_steps=t_total
-    )
+    ) # args.warmup_steps: default is 0
 
     # Check if saved optimizer or scheduler states exist
     if (

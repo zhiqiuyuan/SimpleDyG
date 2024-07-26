@@ -5,174 +5,174 @@
   "added_tokens": [
     {
       "id": 15841,
-      "special": true,
       "content": "<|endoftext|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15842,
-      "special": true,
       "content": "<|history|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15843,
-      "special": true,
       "content": "<|endofhistory|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15844,
-      "special": true,
       "content": "<|pre|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15845,
-      "special": true,
       "content": "<|endofpre|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15846,
-      "special": true,
       "content": "<|time0|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15847,
-      "special": true,
       "content": "<|time1|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15848,
-      "special": true,
       "content": "<|time2|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15849,
-      "special": true,
       "content": "<|time3|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15850,
-      "special": true,
       "content": "<|time4|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15851,
-      "special": true,
       "content": "<|time5|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15852,
-      "special": true,
       "content": "<|time6|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15853,
-      "special": true,
       "content": "<|time7|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15854,
-      "special": true,
       "content": "<|time8|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15855,
-      "special": true,
       "content": "<|time9|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15856,
-      "special": true,
       "content": "<|time10|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15857,
-      "special": true,
       "content": "<|time11|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15858,
-      "special": true,
       "content": "<|time12|>",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     },
     {
       "id": 15859,
-      "special": true,
       "content": "[PAD]",
       "single_word": false,
       "lstrip": false,
       "rstrip": false,
-      "normalized": false
+      "normalized": false,
+      "special": true
     }
   ],
   "normalizer": null,
